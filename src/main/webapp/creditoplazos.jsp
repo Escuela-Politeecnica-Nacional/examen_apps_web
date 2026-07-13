@@ -1,9 +1,11 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="modelo.ResultadoEvaluacionCredito" %>
 <%@ page import="modelo.EstadoCredito" %>
+<%@ page import="modelo.Cliente" %>
 <%@ page import="java.math.BigDecimal" %>
 <%
     ResultadoEvaluacionCredito resultado = (ResultadoEvaluacionCredito) request.getAttribute("resultado");
+    Cliente cliente = (Cliente) request.getAttribute("cliente");
     BigDecimal montoSolicitado = (BigDecimal) request.getAttribute("montoSolicitado");
     Integer plazoMeses = (Integer) request.getAttribute("plazoMeses");
 %>
@@ -62,6 +64,11 @@
             background: #0b1220;
             color: var(--text);
         }
+        input[readonly] {
+            background: #1a2332;
+            color: var(--muted);
+            cursor: not-allowed;
+        }
         button, .link-btn {
             display: inline-block;
             border: 0;
@@ -103,11 +110,13 @@
                 <input type="hidden" name="accion" value="evaluarCredito">
                 <div class="field">
                     <label for="edad">Edad</label>
-                    <input id="edad" name="edad" type="number" min="1" required>
+                    <input id="edad" name="edad" type="number" min="1"
+                           value="<%= cliente != null ? cliente.getEdad() : "" %>" readonly required>
                 </div>
                 <div class="field">
                     <label for="ingresosDeclarados">Ingresos declarados</label>
-                    <input id="ingresosDeclarados" name="ingresosDeclarados" type="number" step="0.01" min="0" required>
+                    <input id="ingresosDeclarados" name="ingresosDeclarados" type="number" step="0.01" min="0"
+                           value="<%= cliente != null ? cliente.getIngresosDeclarados() : "" %>" readonly required>
                 </div>
                 <div class="field">
                     <label for="montoSolicitado">Valor a pagar</label>
@@ -138,7 +147,7 @@
 
         <div class="panel">
             <h2>Flujo del caso de uso</h2>
-            <p class="hint">Cliente logeado, compra a plazos y validación automática con reglas de negocio.</p>
+            <p class="hint">Cliente logeado con edad e ingresos cargados desde la base de datos. Solo ingresa el valor a pagar y las cuotas.</p>
             <div class="actions">
                 <a class="link-btn" href="gestionar?accion=solicitar">Solicitar crédito a plazos</a>
                 <a class="link-btn" href="metodosTradicionales.jsp">Métodos tradicionales</a>

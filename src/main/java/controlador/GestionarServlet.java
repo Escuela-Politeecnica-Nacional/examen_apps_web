@@ -44,19 +44,15 @@ public class GestionarServlet extends HttpServlet {
     }
 
     public void solicitar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute("cliente", sistemaDao.obtenerClienteLogeado());
         RequestDispatcher dispatcher = request.getRequestDispatcher("/creditoplazos.jsp");
         dispatcher.forward(request, response);
     }
 
     public void evaluarCredito(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Integer edad = parseInteger(request.getParameter("edad"));
-        BigDecimal ingresos = parseBigDecimal(request.getParameter("ingresosDeclarados"));
+        Cliente cliente = sistemaDao.obtenerClienteLogeado();
         BigDecimal montoSolicitado = parseBigDecimal(request.getParameter("montoSolicitado"));
         Integer plazoMeses = parseInteger(request.getParameter("plazoMeses"));
-
-        Cliente cliente = new Cliente();
-        cliente.setEdad(edad);
-        cliente.setIngresosDeclarados(ingresos);
 
         ResultadoEvaluacionCredito resultado = sistemaDao.evaluarCredito(cliente, montoSolicitado, plazoMeses);
 

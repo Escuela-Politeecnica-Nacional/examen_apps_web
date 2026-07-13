@@ -13,7 +13,45 @@ import modelo.SolicitudCredito;
 
 public class SistemaDao {
 
+    private static final int EDAD_CLIENTE_LOGEADO = 28;
+    private static final BigDecimal INGRESOS_CLIENTE_LOGEADO = new BigDecimal("5000.00");
+
     private final SistemaBuroCreditoDao sistemaBuroCreditoDao = new SistemaBuroCreditoDao();
+
+    public Cliente obtenerClienteLogeado() {
+        EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+
+        try {
+            Cliente cliente = entityManager.createQuery(
+                    "SELECT c FROM Cliente c ORDER BY c.id ASC", Cliente.class)
+                    .setMaxResults(1)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+
+            transaction.begin();
+            if (cliente == null) {
+                cliente = new Cliente();
+                cliente.setEdad(EDAD_CLIENTE_LOGEADO);
+                cliente.setIngresosDeclarados(INGRESOS_CLIENTE_LOGEADO);
+                entityManager.persist(cliente);
+            } else {
+                cliente.setEdad(EDAD_CLIENTE_LOGEADO);
+                cliente.setIngresosDeclarados(INGRESOS_CLIENTE_LOGEADO);
+                cliente = entityManager.merge(cliente);
+            }
+            transaction.commit();
+            return cliente;
+        } catch (RuntimeException ex) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw ex;
+        } finally {
+            entityManager.close();
+        }
+    }
 
     public int obtenerPuntaje() {
         return Integer.parseInt(sistemaBuroCreditoDao.puntaje());

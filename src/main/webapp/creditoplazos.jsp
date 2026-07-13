@@ -110,16 +110,16 @@
                     <input id="ingresosDeclarados" name="ingresosDeclarados" type="number" step="0.01" min="0" required>
                 </div>
                 <div class="field">
-                    <label for="montoSolicitado">Monto solicitado</label>
+                    <label for="montoSolicitado">Valor a pagar</label>
                     <input id="montoSolicitado" name="montoSolicitado" type="number" step="0.01" min="0" required>
                 </div>
                 <div class="field">
-                    <label for="plazoMeses">Plazo en meses</label>
+                    <label for="plazoMeses">Número de cuotas</label>
                     <select id="plazoMeses" name="plazoMeses" required>
+                        <option value="3">3 meses</option>
                         <option value="6">6 meses</option>
+                        <option value="9">9 meses</option>
                         <option value="12">12 meses</option>
-                        <option value="18">18 meses</option>
-                        <option value="24">24 meses</option>
                     </select>
                 </div>
                 <button type="submit">Evaluar crédito</button>
@@ -145,7 +145,7 @@
             </div>
             <div class="result">
                 <strong>Reglas</strong>
-                <p class="hint">Aprobado desde 75. En revisión entre 50 y 74. Rechazado si es menor de 50, si es menor de 18 o si la cuota supera el 40% de los ingresos declarados.</p>
+                <p class="hint">El sistema consulta el buró y obtiene un puntaje simulado. Aprobado desde 75. En revisión entre 50 y 74. Rechazado si es menor de 50, si es menor de 18 o si la cuota supera el 40% de los ingresos declarados.</p>
             </div>
             <% if (resultado != null && resultado.getEstado() == EstadoCredito.RECHAZADO) { %>
             <div class="result">

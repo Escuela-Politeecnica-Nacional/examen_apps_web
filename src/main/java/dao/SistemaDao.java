@@ -15,20 +15,22 @@ public class SistemaDao {
 
     private final SistemaBuroCreditoDao sistemaBuroCreditoDao = new SistemaBuroCreditoDao();
 
-    public int obtenerPuntaje(Cliente cliente) {
-        return Integer.parseInt(sistemaBuroCreditoDao.puntaje(cliente));
+    public int obtenerPuntaje() {
+        return Integer.parseInt(sistemaBuroCreditoDao.puntaje());
     }
 
     public ResultadoEvaluacionCredito evaluarCredito(Cliente cliente, BigDecimal montoSolicitado, Integer plazoMeses) {
         BigDecimal monto = montoSolicitado == null ? BigDecimal.ZERO : montoSolicitado;
         Integer plazo = plazoMeses == null || plazoMeses <= 0 ? 1 : plazoMeses;
         BigDecimal cuotaMensual = monto.divide(BigDecimal.valueOf(plazo), 2, RoundingMode.HALF_UP);
-        int puntaje = obtenerPuntaje(cliente);
+        int puntaje = obtenerPuntaje();
 
         EstadoCredito estado;
         String mensaje;
 
-        if (cliente == null || cliente.getEdad() == null || cliente.getEdad() < 18 || cliente.getIngresosDeclarados() == null || cuotaMensual.compareTo(cliente.getIngresosDeclarados().multiply(new BigDecimal("0.40"))) > 0) {
+        if (cliente == null || cliente.getEdad() == null || cliente.getEdad() < 18
+                || cliente.getIngresosDeclarados() == null
+                || cuotaMensual.compareTo(cliente.getIngresosDeclarados().multiply(new BigDecimal("0.40"))) > 0) {
             estado = EstadoCredito.RECHAZADO;
             mensaje = "No es posible otorgar el credito en este momento. Puedes continuar con tarjeta o transferencia.";
         } else if (puntaje >= 75) {
